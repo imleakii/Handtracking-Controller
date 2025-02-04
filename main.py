@@ -14,6 +14,10 @@ class Camera():
 
         h, w, c = self.img.shape
         self.tracker = Tracker(width=w, height=h, landmarks=[4,8])
+    
+    def update_tracker(self):
+        imgRGB = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
+        self.tracker.process(imgRGB)
 
     def update_fps(self):
         self.cTime = time.time()
@@ -45,6 +49,7 @@ class Camera():
     
     def update_frame(self):
         _, self.img = self.cap.read()
+        self.update_tracker()
         self.draw_line(4, 8)
         self.draw_angle(4, 8)
         self.update_fps()
