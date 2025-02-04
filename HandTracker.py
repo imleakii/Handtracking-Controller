@@ -32,6 +32,8 @@ class Tracker():
                     self.positions[i].x = int(handLms.landmark[i].x * self.w)
                     self.positions[i].y = int(handLms.landmark[i].y * self.h)
                     self.positions[i].z = handLms.landmark[i].z
+            return True
+        return False
 
 
     def get_dist(self, pos1: Pos , pos2: Pos):

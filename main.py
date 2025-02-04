@@ -21,7 +21,9 @@ class Camera():
     
     def update_tracker(self):
         imgRGB = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
-        self.tracker.process(imgRGB)
+        if self.tracker.process(imgRGB):
+            return True
+        return False
 
     def update_fps(self):
         self.cTime = time.time()
@@ -35,8 +37,12 @@ class Camera():
         p1 = (self.tracker.positions[landmark1].x, self.tracker.positions[landmark1].y)
         p2 = (self.tracker.positions[landmark2].x, self.tracker.positions[landmark2].y)
         cv2.line(self.img, p1, p2, (255, 255, 255), 1)
+
         if include_info:
             dist = self.tracker.get_dist(self.tracker.positions[landmark1], self.tracker.positions[landmark2])
+            if dist == 0:
+                return
+            
             if dist > self.max_dist:
                 self.max_dist = dist
                 dist = 1
@@ -44,7 +50,7 @@ class Camera():
                 dist = 0
             else:
                 dist = interpolate(dist, 0, self.max_dist, 0, 1)
-            cv2.putText(self.img, str(dist),
+            cv2.putText(self.img, str(round(dist, 2)),
                                     (int((p2[0]+p1[0])/2), int((p2[1]+p1[1])/2)),
                                     cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 3)
 
@@ -60,9 +66,9 @@ class Camera():
     
     def update_frame(self):
         _, self.img = self.cap.read()
-        self.update_tracker()
-        self.draw_line(4, 8)
-        self.draw_angle(4, 8)
+        if self.update_tracker():
+            self.draw_line(4, 8)
+            self.draw_angle(4, 8)
         self.update_fps()
 
         cv2.imshow("Frame", self.img)
