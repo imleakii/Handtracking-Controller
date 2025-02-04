@@ -2,6 +2,7 @@ import mediapipe as mp
 import cv2
 import os, time
 from HandTracker import Tracker
+from utils import *
 
 # mpDraw.draw_landmarks(img, handLms, handsMp.HAND_CONNECTIONS)
 
@@ -14,6 +15,9 @@ class Camera():
 
         h, w, c = self.img.shape
         self.tracker = Tracker(width=w, height=h, landmarks=[4,8])
+
+        #temp
+        self.max_dist = 0
     
     def update_tracker(self):
         imgRGB = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
@@ -32,8 +36,15 @@ class Camera():
         p2 = (self.tracker.positions[landmark2].x, self.tracker.positions[landmark2].y)
         cv2.line(self.img, p1, p2, (255, 255, 255), 1)
         if include_info:
-            cv2.putText(self.img, str(self.tracker.get_dist(self.tracker.positions[landmark1],
-                                    self.tracker.positions[landmark2])),
+            dist = self.tracker.get_dist(self.tracker.positions[landmark1], self.tracker.positions[landmark2])
+            if dist > self.max_dist:
+                self.max_dist = dist
+                dist = 1
+            elif dist < self.max_dist*0.05:
+                dist = 0
+            else:
+                dist = interpolate(dist, 0, self.max_dist, 0, 1)
+            cv2.putText(self.img, str(dist),
                                     (int((p2[0]+p1[0])/2), int((p2[1]+p1[1])/2)),
                                     cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 3)
 
