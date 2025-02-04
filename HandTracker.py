@@ -2,6 +2,9 @@ import mediapipe as mp
 import cv2
 import os, time, math
 
+# TODO:
+# swipe motion detection using z coordinate
+
 class Pos():
     def __init__(self):
         self.x = 0
