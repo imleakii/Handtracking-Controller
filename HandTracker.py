@@ -35,7 +35,7 @@ class Tracker():
 
 
     def get_dist(self, pos1: Pos , pos2: Pos):
-        print(math.sqrt(math.pow(pos2.x - pos1.x, 2) + math.pow(pos2.y - pos1.y, 2)))
+        # print(math.sqrt(math.pow(pos2.x - pos1.x, 2) + math.pow(pos2.y - pos1.y, 2)))
         return int(math.sqrt(math.pow(pos2.x - pos1.x, 2) + math.pow(pos2.y - pos1.y, 2)))
 
     def get_angle(self, pos1: Pos , pos2: Pos):
