@@ -4,6 +4,7 @@ import os, time
 from HandTracker import Tracker
 from AudioController import AudioController
 from utils import *
+from KeyboardController import KeyboardController
 
 # mpDraw.draw_landmarks(img, handLms, handsMp.HAND_CONNECTIONS)
 # z < -0.1  --> touch activation
@@ -11,6 +12,7 @@ from utils import *
 class Camera():
     def __init__(self):
         self.audio = AudioController("chrome.exe")
+        self.keyboard = KeyboardController()
         self.cap = cv2.VideoCapture(1)
         self.cTime = 0
         self.pTime = 0
@@ -65,13 +67,22 @@ class Camera():
             return dist
 
     def draw_angle(self, landmark1: int, landmark2: int, activation_color = (0, 0, 255), min_angle: int = 60):
+        """
+        calculate and display angle between landmark1 and landmark2
+
+        returns True if angle > min_angle
+        """
+        activated = False
         p1 = (self.tracker.positions[landmark1].x, self.tracker.positions[landmark1].y)
         p2 = (self.tracker.positions[landmark2].x, self.tracker.positions[landmark2].y)
         angle = self.tracker.get_angle(self.tracker.positions[landmark1], self.tracker.positions[landmark2])
         color = (255, 255, 255)
         if angle > min_angle:
+            activated = True
             color = activation_color
         cv2.putText(self.img, "angle: "+str(angle), (int((p2[0]+p1[0])/2), int((p2[1]+p1[1])/2)+40), cv2.FONT_HERSHEY_PLAIN, 2, color, 3)
+
+        return activated
 
     def draw_touch(self, landmark: int):
         pos = self.tracker.positions[landmark]
@@ -92,7 +103,8 @@ class Camera():
         if self.update_tracker():
             d = self.draw_line(4, 8)
             self.update_volume(d)
-            self.draw_angle(4, 8)
+            if self.draw_angle(4, 8):
+                self.keyboard.next_song()
             self.draw_touch(8)
         self.update_fps()
         #print(self.tracker.positions[4].z)
