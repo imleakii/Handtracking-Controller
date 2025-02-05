@@ -21,8 +21,9 @@ class Camera():
         h, w, c = self.img.shape
         self.tracker = Tracker(width=w, height=h, landmarks=[4,8])
 
-        #temp
-        self.max_dist = 0
+        self.max_dist = 0 # maximum recorded distance between joint 4 and 8
+        self.last_angle = 0 # track when the last angle activation was
+        self.angle_delay = 0.5 # minimum delay between angle activations
     
     def update_tracker(self):
         imgRGB = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
@@ -103,16 +104,21 @@ class Camera():
         if self.update_tracker():
             d = self.draw_line(4, 8)
             self.update_volume(d)
-            if self.draw_angle(4, 8):
+            if self.draw_angle(4, 8) and time.time()-self.last_angle > self.angle_delay:
                 self.keyboard.next_song()
+                self.last_angle = time.time()
             self.draw_touch(8)
         self.update_fps()
         #print(self.tracker.positions[4].z)
 
         cv2.imshow("Frame", self.img)
-        cv2.waitKey(1)
+        return cv2.waitKey(1)
 
     
 c = Camera()
 while True:
-    c.update_frame()
+    key = c.update_frame()
+    if key == 27: # s key on the keyboard
+        break
+c.audio.set_volume(1)
+c.cap.release()
