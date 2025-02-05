@@ -70,6 +70,7 @@ class Camera():
             self.draw_line(4, 8)
             self.draw_angle(4, 8)
         self.update_fps()
+        print(self.tracker.positions[4].z)
 
         cv2.imshow("Frame", self.img)
         cv2.waitKey(1)
