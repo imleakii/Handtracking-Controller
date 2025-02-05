@@ -2,6 +2,7 @@ import mediapipe as mp
 import cv2
 import os, time
 from HandTracker import Tracker
+from AudioController import AudioController
 from utils import *
 
 # mpDraw.draw_landmarks(img, handLms, handsMp.HAND_CONNECTIONS)
@@ -9,6 +10,7 @@ from utils import *
 
 class Camera():
     def __init__(self):
+        self.audio = AudioController("chrome.exe")
         self.cap = cv2.VideoCapture(1)
         self.cTime = 0
         self.pTime = 0
@@ -35,6 +37,12 @@ class Camera():
 
     
     def draw_line(self, landmark1: int, landmark2: int, include_info = True):
+        """
+        draw a line from landmark1 to landmark2
+        include_info: adds distance information to img as well
+
+        returns the distance on range [0,1]
+        """
         p1 = (self.tracker.positions[landmark1].x, self.tracker.positions[landmark1].y)
         p2 = (self.tracker.positions[landmark2].x, self.tracker.positions[landmark2].y)
         cv2.line(self.img, p1, p2, (255, 255, 255), 1)
@@ -54,6 +62,7 @@ class Camera():
             cv2.putText(self.img, str(round(dist, 2)),
                                     (int((p2[0]+p1[0])/2), int((p2[1]+p1[1])/2)),
                                     cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 3)
+            return dist
 
     def draw_angle(self, landmark1: int, landmark2: int, activation_color = (0, 0, 255), min_angle: int = 60):
         p1 = (self.tracker.positions[landmark1].x, self.tracker.positions[landmark1].y)
@@ -71,10 +80,18 @@ class Camera():
             color = (0,0,255)
         cv2.circle(self.img, center=(pos.x, pos.y), radius=10, color=color, thickness=1, lineType=3)
     
+    def update_volume(self, volume: float):
+        """
+        volume: float value between [0,1]
+        """
+        self.audio.set_volume(volume)
+
+    
     def update_frame(self):
         _, self.img = self.cap.read()
         if self.update_tracker():
-            self.draw_line(4, 8)
+            d = self.draw_line(4, 8)
+            self.update_volume(d)
             self.draw_angle(4, 8)
             self.draw_touch(8)
         self.update_fps()
