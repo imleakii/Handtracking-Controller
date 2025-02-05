@@ -7,7 +7,10 @@ from utils import *
 from KeyboardController import KeyboardController
 
 # mpDraw.draw_landmarks(img, handLms, handsMp.HAND_CONNECTIONS)
-# z < -0.1  --> touch activation
+# z < -0.08  --> touch activation
+
+# TODO
+# add support for 2 hands at once
 
 class Camera():
     def __init__(self):
@@ -23,7 +26,7 @@ class Camera():
 
         self.max_dist = 0 # maximum recorded distance between joint 4 and 8
         self.last_angle = 0 # track when the last angle activation was
-        self.angle_delay = 0.5 # minimum delay between angle activations
+        self.angle_delay = 1 # minimum delay between angle activations
     
     def update_tracker(self):
         imgRGB = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
@@ -88,7 +91,7 @@ class Camera():
     def draw_touch(self, landmark: int):
         pos = self.tracker.positions[landmark]
         color = (255,255,255)
-        if pos.z < -0.1:
+        if pos.z < -0.08:
             color = (0,0,255)
         cv2.circle(self.img, center=(pos.x, pos.y), radius=10, color=color, thickness=1, lineType=3)
     
