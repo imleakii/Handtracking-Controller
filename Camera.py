@@ -47,7 +47,7 @@ class Camera():
             if dist > self.max_dist:
                 self.max_dist = dist
                 dist = 1
-            elif dist < self.max_dist*0.05:
+            elif dist < self.max_dist*0.1:
                 dist = 0
             else:
                 dist = interpolate(dist, 0, self.max_dist, 0, 1)
@@ -67,14 +67,14 @@ class Camera():
     def draw_touch(self, landmark: int):
         pos = self.tracker.positions[landmark]
 
-        cv2.circle(self.img, center=(pos.x, pos.y), radius=3, color=(255,255,255), thickness=1)
+        cv2.circle(self.img, center=(pos.x, pos.y), radius=10, color=(255,255,255), thickness=1, lineType=3)
     
     def update_frame(self):
         _, self.img = self.cap.read()
         if self.update_tracker():
             self.draw_line(4, 8)
             self.draw_angle(4, 8)
-            self.draw_touch(4)
+            self.draw_touch(8)
         self.update_fps()
         #print(self.tracker.positions[4].z)
 
