@@ -43,7 +43,7 @@ class AudioController:
                 # only set volume in the range 0.0 to 1.0
                 self.volume = min(1.0, max(0.0, decibels))
                 interface.SetMasterVolume(self.volume, None)
-                print("Volume set to", self.volume)  # debug
+                # print("Volume set to", self.volume)  # debug
 
     def decrease_volume(self, decibels):
         sessions = AudioUtilities.GetAllSessions()

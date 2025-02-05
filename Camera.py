@@ -54,17 +54,24 @@ class Camera():
         cv2.line(self.img, p1, p2, (255, 255, 255), 1)
 
         if include_info:
+            # get distance between landmark1 and 2
             dist = self.tracker.get_dist(self.tracker.positions[landmark1], self.tracker.positions[landmark2])
             if dist == 0:
                 return
             
+            # adjust max distance
             if dist > self.max_dist:
                 self.max_dist = dist
-                dist = 1
-            elif dist < self.max_dist*0.1:
+                print(f"new max dist: {self.max_dist}")
+
+            # interpolate and adjust distance to make it smoother
+            dist = interpolate(dist, self.max_dist*0.1, self.max_dist*0.8, 0, 1)
+            if dist < 0:
                 dist = 0
-            else:
-                dist = interpolate(dist, 0, self.max_dist, 0, 1)
+            elif dist > 1:
+                dist = 1
+
+            # display line + distance on img
             cv2.putText(self.img, str(round(dist, 2)),
                                     (int((p2[0]+p1[0])/2), int((p2[1]+p1[1])/2)),
                                     cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 3)
@@ -79,6 +86,12 @@ class Camera():
         activated = False
         p1 = (self.tracker.positions[landmark1].x, self.tracker.positions[landmark1].y)
         p2 = (self.tracker.positions[landmark2].x, self.tracker.positions[landmark2].y)
+
+        # dont track angle if fingers too close
+        dist = self.tracker.get_dist(self.tracker.positions[landmark1], self.tracker.positions[landmark2])
+        if dist < self.max_dist*0.3:
+            return False
+
         angle = self.tracker.get_angle(self.tracker.positions[landmark1], self.tracker.positions[landmark2])
         color = (255, 255, 255)
         if angle > min_angle:
