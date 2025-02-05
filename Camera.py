@@ -5,6 +5,7 @@ from HandTracker import Tracker
 from utils import *
 
 # mpDraw.draw_landmarks(img, handLms, handsMp.HAND_CONNECTIONS)
+# z < -0.1  --> touch activation
 
 class Camera():
     def __init__(self):
@@ -63,14 +64,19 @@ class Camera():
             color = activation_color
         cv2.putText(self.img, "angle: "+str(angle), (int((p2[0]+p1[0])/2), int((p2[1]+p1[1])/2)+40), cv2.FONT_HERSHEY_PLAIN, 2, color, 3)
 
+    def draw_touch(self, landmark: int):
+        pos = self.tracker.positions[landmark]
+
+        cv2.circle(self.img, center=(pos.x, pos.y), radius=3, color=(255,255,255), thickness=1)
     
     def update_frame(self):
         _, self.img = self.cap.read()
         if self.update_tracker():
             self.draw_line(4, 8)
             self.draw_angle(4, 8)
+            self.draw_touch(4)
         self.update_fps()
-        print(self.tracker.positions[4].z)
+        #print(self.tracker.positions[4].z)
 
         cv2.imshow("Frame", self.img)
         cv2.waitKey(1)
