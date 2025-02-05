@@ -66,8 +66,10 @@ class Camera():
 
     def draw_touch(self, landmark: int):
         pos = self.tracker.positions[landmark]
-
-        cv2.circle(self.img, center=(pos.x, pos.y), radius=10, color=(255,255,255), thickness=1, lineType=3)
+        color = (255,255,255)
+        if pos.z < -0.1:
+            color = (0,0,255)
+        cv2.circle(self.img, center=(pos.x, pos.y), radius=10, color=color, thickness=1, lineType=3)
     
     def update_frame(self):
         _, self.img = self.cap.read()
