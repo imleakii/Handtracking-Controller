@@ -42,14 +42,23 @@ class Tracker():
         # check which hands detected (left/right/both) and update joint positions
         # TODO: fix this mess
         hands = results.multi_handedness
+        print(len(hands))
         if len(hands) == 2:
             print("both")
-            handLms = results.multi_hand_landmarks[0]
+            first_hand = hands[0].classification[0].label
+            if first_hand == 'left':
+                handLms = results.multi_hand_landmarks[0]
+            else:
+                handLms = results.multi_hand_landmarks[1]
             for i in list(self.left_positions.keys()):
                 self.left_positions[i].x = int(handLms.landmark[i].x * self.w)
                 self.left_positions[i].y = int(handLms.landmark[i].y * self.h)
                 self.left_positions[i].z = handLms.landmark[i].z
-            handLms = results.multi_hand_landmarks[1]
+
+            if first_hand == 'left':
+                handLms = results.multi_hand_landmarks[1]
+            else:
+                handLms = results.multi_hand_landmarks[0]
             for i in list(self.right_positions.keys()):
                 self.right_positions[i].x = int(handLms.landmark[i].x * self.w)
                 self.right_positions[i].y = int(handLms.landmark[i].y * self.h)
