@@ -1,3 +1,10 @@
+
+class Pos():
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+        self.z = 0
+
 def interpolate(value, a1, a2, b1, b2):
     """
     maps a value in the range[a1, a2] to [b1, b2]
