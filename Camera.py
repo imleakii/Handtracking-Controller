@@ -130,6 +130,17 @@ class Camera():
         volume: float value between [0,1]
         """
         self.audio.set_volume(volume)
+    
+    def draw_handedness(self, hand: str):
+        """
+        temp
+        """
+        if hand == 'left':
+            pos = self.tracker.left_positions[4]
+            cv2.putText(self.img, hand, pos.x, pos.y, cv2.FONT_HERSHEY_PLAIN, 2, (255,0,0), 2)
+        elif hand == 'right':
+            pos = self.tracker.right_positions[4]
+            cv2.putText(self.img, hand, pos.x, pos.y, cv2.FONT_HERSHEY_PLAIN, 2, (255,0,0), 2)
 
     
     def update_frame(self):
@@ -138,11 +149,15 @@ class Camera():
         if 'left' in hands:
             d = self.draw_line("left", 4, 8)
             self.update_volume(d)
+
+            self.draw_handedness('left')
         if 'right' in hands:
             if self.draw_angle("right", 4, 8) and time.time()-self.last_angle > self.angle_delay:
                 self.keyboard.next_song()
                 self.last_angle = time.time()
             self.draw_touch("right", 8)
+
+            self.draw_handedness('right')
 
         self.update_fps()
         #print(self.tracker.positions[4].z)
