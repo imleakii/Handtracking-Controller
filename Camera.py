@@ -13,10 +13,11 @@ from KeyboardController import KeyboardController
 # add support for 2 hands at once
 
 class Camera():
-    def __init__(self, camera: int):
+    def __init__(self, camera: int, flipped_camera: bool = False):
         self.audio = AudioController("chrome.exe")
         self.keyboard = KeyboardController()
         self.cap = cv2.VideoCapture(camera)
+        self.flipped_camera = flipped_camera
         self.cTime = 0
         self.pTime = 0
         _, self.img = self.cap.read()
@@ -133,31 +134,29 @@ class Camera():
     
     def draw_handedness(self, hand: str):
         """
-        temp
+        for debugging
         """
         if hand == 'left':
             pos = self.tracker.left_positions[4]
-            cv2.putText(self.img, hand, pos.x, pos.y, cv2.FONT_HERSHEY_PLAIN, 2, (255,0,0), 2)
+            cv2.putText(self.img, hand, (pos.x, pos.y), cv2.FONT_HERSHEY_PLAIN, 2, (255,0,0), 2)
         elif hand == 'right':
             pos = self.tracker.right_positions[4]
-            cv2.putText(self.img, hand, pos.x, pos.y, cv2.FONT_HERSHEY_PLAIN, 2, (255,0,0), 2)
+            cv2.putText(self.img, hand, (pos.x, pos.y), cv2.FONT_HERSHEY_PLAIN, 2, (255,0,0), 2)
 
     
     def update_frame(self):
         _, self.img = self.cap.read()
+        if self.flipped_camera:
+            self.img = cv2.flip(self.img, 1)
         hands = self.update_tracker()
         if 'left' in hands:
             d = self.draw_line("left", 4, 8)
             self.update_volume(d)
-
-            self.draw_handedness('left')
         if 'right' in hands:
             if self.draw_angle("right", 4, 8) and time.time()-self.last_angle > self.angle_delay:
                 self.keyboard.next_song()
                 self.last_angle = time.time()
             self.draw_touch("right", 8)
-
-            self.draw_handedness('right')
 
         self.update_fps()
 
@@ -165,7 +164,7 @@ class Camera():
         return cv2.waitKey(1)
 
     
-c = Camera(0)
+c = Camera(0, flipped_camera=True)
 while True:
     key = c.update_frame()
     if key == 27: # s key on the keyboard

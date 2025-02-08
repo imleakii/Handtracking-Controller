@@ -65,7 +65,7 @@ class Tracker():
                 self.right_positions[i].y = int(handLms.landmark[i].y * self.h)
                 self.right_positions[i].z = handLms.landmark[i].z
             return ['left', 'right']
-        elif hands[0].classification[0].label == 'Right': # temporarily switched because my camera is flipped
+        elif hands[0].classification[0].label == 'Left': # temporarily switched because my camera is flipped
             print('left')
             handLms = results.multi_hand_landmarks[0]
             for i in list(self.left_positions.keys()):
