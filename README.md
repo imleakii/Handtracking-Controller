@@ -21,7 +21,7 @@ TODO: demo gifs
 To try this project for yourself, download the project files and install dependencies by running
 
 ```bash
-  pip install requirements.txt
+  pip install -r requirements.txt
 ```
 then run
 ```bash
