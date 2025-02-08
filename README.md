@@ -25,7 +25,7 @@ To try this project for yourself, download the project files and install depende
 ```
 then run
 ```bash
-  python3 Camera.py
+  python Camera.py
 ```
 
 ## Feedback
