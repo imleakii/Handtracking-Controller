@@ -84,9 +84,16 @@ class Tracker():
 
 
     def get_dist(self, pos1: Pos , pos2: Pos):
+        """
+        returns the distance between pos1 and pos2
+        """
         return int(math.sqrt(math.pow(pos2.x - pos1.x, 2) + math.pow(pos2.y - pos1.y, 2)))
 
     def get_angle(self, pos1: Pos , pos2: Pos):
+        """
+        returns the angle between pos1 and pos2 (to the vertical)
+        the angle will always be positive
+        """
         x = abs(pos2.x - pos1.x)
         y = abs(pos2.y - pos1.y)
 

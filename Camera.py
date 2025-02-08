@@ -45,7 +45,7 @@ class Camera():
     def draw_line(self, hand: str, landmark1: int, landmark2: int, include_info = True):
         """
         draw a line from landmark1 to landmark2
-        include_info: adds distance information to img as well
+        include_info: displays distance information onto img
 
         returns the distance on range [0,1]
         """
