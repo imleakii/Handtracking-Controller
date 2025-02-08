@@ -13,10 +13,10 @@ from KeyboardController import KeyboardController
 # add support for 2 hands at once
 
 class Camera():
-    def __init__(self):
+    def __init__(self, camera: int):
         self.audio = AudioController("chrome.exe")
         self.keyboard = KeyboardController()
-        self.cap = cv2.VideoCapture(1)
+        self.cap = cv2.VideoCapture(camera)
         self.cTime = 0
         self.pTime = 0
         _, self.img = self.cap.read()
@@ -145,13 +145,12 @@ class Camera():
             self.draw_touch("right", 8)
 
         self.update_fps()
-        #print(self.tracker.positions[4].z)
 
         cv2.imshow("Frame", self.img)
         return cv2.waitKey(1)
 
     
-c = Camera()
+c = Camera(0)
 while True:
     key = c.update_frame()
     if key == 27: # s key on the keyboard

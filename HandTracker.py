@@ -46,7 +46,8 @@ class Tracker():
         if len(hands) == 2:
             print("both")
             first_hand = hands[0].classification[0].label
-            if first_hand == 'left':
+            print(first_hand)
+            if first_hand == 'Left':
                 handLms = results.multi_hand_landmarks[0]
             else:
                 handLms = results.multi_hand_landmarks[1]
@@ -55,7 +56,7 @@ class Tracker():
                 self.left_positions[i].y = int(handLms.landmark[i].y * self.h)
                 self.left_positions[i].z = handLms.landmark[i].z
 
-            if first_hand == 'left':
+            if first_hand == 'Left':
                 handLms = results.multi_hand_landmarks[1]
             else:
                 handLms = results.multi_hand_landmarks[0]
